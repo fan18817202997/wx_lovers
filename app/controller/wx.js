@@ -58,12 +58,12 @@ class HomeController extends Controller {
 
     // 发送订阅通知
     async sendNotify() {
+        const { ctx, service } = this
         const runId = `sendNotify_${Date.now()}`
         // #region agent log
         postDebug(this.ctx.app, {sessionId:'04abb4',runId,hypothesisId:'H1',location:'app/controller/wx.js:sendNotify',message:'enter sendNotify',data:{method:'POST'},timestamp:Date.now()})
         // #endregion
         try {
-            const { ctx, service } = this
             await service.wxNotify.snedNotify(runId)
             // #region agent log
             postDebug(this.ctx.app, {sessionId:'04abb4',runId,hypothesisId:'H1',location:'app/controller/wx.js:sendNotify',message:'sendNotify finished',data:{ok:true},timestamp:Date.now()})
