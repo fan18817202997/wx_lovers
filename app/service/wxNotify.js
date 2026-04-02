@@ -157,42 +157,34 @@ class WxNotify extends Service {
             if(!users || !users.length) {
                 throw new Error('获取关注用户失败，请先关注测试公众号')
             }
-            const weatherEmoji = getWeatherEmoji(weather.weather)
+            const wEmoji = getWeatherEmoji(weather.weather)
             const data = {
-                date: {
-                    value: `${curDateStr} ${curWeek}`,
+                d1: {
+                    value: `📅今天是${curDateStr} ${curWeek}`,
                     color: randomHexColor()
                 },
-                city: {
-                    value: weather.city,
+                d2: {
+                    value: `🏙️地区：${weather.city}`,
                     color: randomHexColor()
                 },
-                weatherEmoji: {
-                    value: weatherEmoji,
+                d3: {
+                    value: `${wEmoji}今日天气：${weather.weather} ${weather.nighttemp}℃~${weather.daytemp}℃`,
                     color: randomHexColor()
                 },
-                weather: {
-                    value: weather.weather,
+                d4: {
+                    value: `🌸我们已经在一起${lovsDays}天啦`,
                     color: randomHexColor()
                 },
-                temperature: {
-                    value: `${weather.nighttemp}℃~${weather.daytemp}℃`,
+                d5: {
+                    value: `🎉距离宝宝的生日还有${gfBirthDays}天`,
                     color: randomHexColor()
                 },
-                love_day: {
-                    value: lovsDays,
+                d6: {
+                    value: `🌈${chp || '你是最好的宝贝'}`,
                     color: randomHexColor()
                 },
-                gfBirthDays: {
-                    value: gfBirthDays,
-                    color: randomHexColor()
-                },
-                caihongpi: {
-                    value: chp || '你是世界上最好的宝贝',
-                    color: randomHexColor()
-                },
-                lizhi: {
-                    value: lizhiWord || '暂无数据',
+                d7: {
+                    value: lizhiWord || '',
                     color: randomHexColor()
                 }
             }
