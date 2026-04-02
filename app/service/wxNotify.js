@@ -157,6 +157,7 @@ class WxNotify extends Service {
             if(!users || !users.length) {
                 throw new Error('获取关注用户失败，请先关注测试公众号')
             }
+            const wEmoji = getWeatherEmoji(weather.weather)
             const data = {
                 date: {
                     value: `${curDateStr} ${curWeek}`,
@@ -167,11 +168,11 @@ class WxNotify extends Service {
                     color: randomHexColor()
                 },
                 weather: {
-                    value: String(weather.weather),
+                    value: `${wEmoji}${weather.weather}`,
                     color: randomHexColor()
                 },
                 temperature: {
-                    value: `${weather.nighttemp}~${weather.daytemp}`,
+                    value: `${weather.nighttemp}~${weather.daytemp}℃`,
                     color: randomHexColor()
                 },
                 love_day: {
