@@ -16,10 +16,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16.14.0'
-      - name: Debug runtime version
-        run: |
-          git rev-parse HEAD
-          node -e "const fs=require('fs');const t=fs.readFileSync('./app/service/wxNotify.js','utf8');console.log('wxNotifyHasCtxPattern=',/\\{\\s*ctx\\s*,\\s*app\\s*,\\s*service\\s*\\}/.test(t));console.log('wxNotifyHasMarker=',t.includes('marker=wxNotify_v2_enter'));"
       - name: Depend install and serve
         env:
           WXAPPID: ${{ secrets.WXAPPID }}
@@ -34,11 +30,5 @@ jobs:
           sleep 15
       - name: Send Notify
         run: curl --retry 5 --retry-delay 3 --retry-connrefused --fail-with-body -sS -X POST http://127.0.0.1:7001/sendNotify
-      - name: Debug service logs
-        if: always()
-        run: |
-          ls -R logs || true
-          if [ -f logs/wx_send_template/common-error.log ]; then tail -n 200 logs/wx_send_template/common-error.log; fi
-          if [ -f logs/wx_send_template/egg-web.log ]; then tail -n 200 logs/wx_send_template/egg-web.log; fi
       - name: Stop Service
         run: npm run stop

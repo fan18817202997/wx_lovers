@@ -9,17 +9,6 @@ const apiUrl = {
     words: 'https://v1.hitokoto.cn'
 }
 const fs = require('fs')
-const DEBUG_ENDPOINT = 'http://127.0.0.1:7771/ingest/41b92aae-4107-48cd-9382-74fd1c77ea66'
-
-function postDebug(app, payload) {
-    app.curl(DEBUG_ENDPOINT, {
-        method: 'POST',
-        dataType: 'json',
-        headers: { 'X-Debug-Session-Id': '04abb4' },
-        contentType: 'json',
-        data: payload,
-    }).catch(() => {})
-}
 class NotifyUtils extends Service {
     // 星期几
     getWeek() {
@@ -65,21 +54,6 @@ class NotifyUtils extends Service {
         // let cityData = fs.readFileSync('./utils/usercity.json', 'utf8')
         let cityData = app.config.userCity || null
         if(!cityData) return null
-        // #region agent log
-        postDebug(app, {
-            sessionId: '04abb4',
-            runId: `getWether_${Date.now()}`,
-            hypothesisId: 'H6',
-            location: 'app/service/notifyUtils.js:getWether',
-            message: 'weather request params',
-            data: {
-                hasAmapKey: !!(app.config.apiConfig && app.config.apiConfig.amap && app.config.apiConfig.amap.appKey),
-                adname: cityData.adname || '',
-                adcode: cityData.adcode || '',
-            },
-            timestamp: Date.now(),
-        })
-        // #endregion
         const res = await app.curl(`${apiUrl.gdWether}`, {
             method: 'GET',
             dataType: 'json',
@@ -89,23 +63,6 @@ class NotifyUtils extends Service {
                 city: cityData.adcode
             }
         })
-        // #region agent log
-        postDebug(app, {
-            sessionId: '04abb4',
-            runId: `getWether_${Date.now()}`,
-            hypothesisId: 'H7',
-            location: 'app/service/notifyUtils.js:getWether',
-            message: 'weather response summary',
-            data: {
-                httpStatus: res.status,
-                status: res.data && res.data.status ? res.data.status : '',
-                info: res.data && res.data.info ? res.data.info : '',
-                infocode: res.data && res.data.infocode ? res.data.infocode : '',
-                count: res.data && res.data.count ? res.data.count : '',
-            },
-            timestamp: Date.now(),
-        })
-        // #endregion
         
         if(res.status === 200 && res.data.status === '1') {
             const wether = res.data.lives[0]
