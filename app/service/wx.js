@@ -5,6 +5,17 @@ const Service = require('egg').Service;
 const crypto = require('crypto');
 const wxBase = 'https://api.weixin.qq.com/cgi-bin';
 const menus = require('../../utils/menuJson.js');
+const DEBUG_ENDPOINT = 'http://127.0.0.1:7771/ingest/41b92aae-4107-48cd-9382-74fd1c77ea66';
+
+function postDebug(app, payload) {
+  app.curl(DEBUG_ENDPOINT, {
+    method: 'POST',
+    dataType: 'json',
+    headers: { 'X-Debug-Session-Id': '04abb4' },
+    contentType: 'json',
+    data: payload,
+  }).catch(() => {});
+}
 class Wechat extends Service {
 
   /**
@@ -35,11 +46,44 @@ class Wechat extends Service {
     if (hasAccessToken) {
       return hasAccessToken;
     }
+    // #region agent log
+    postDebug(app, {
+      sessionId: '04abb4',
+      runId: `getAccessToken_${Date.now()}`,
+      hypothesisId: 'H8',
+      location: 'app/service/wx.js:getAccessToken',
+      message: 'request wx access_token',
+      data: {
+        hasAppId: !!app.config.wx.appId,
+        hasAppSecret: !!app.config.wx.appSecret,
+      },
+      timestamp: Date.now(),
+    });
+    // #endregion
     const getAccessToken = await app.curl(`${wxBase}/token?grant_type=client_credential&appid=${app.config.wx.appId}&secret=${app.config.wx.appSecret}`, {
       method: 'GET',
       dataType: 'json',
     });
+    // #region agent log
+    postDebug(app, {
+      sessionId: '04abb4',
+      runId: `getAccessToken_${Date.now()}`,
+      hypothesisId: 'H9',
+      location: 'app/service/wx.js:getAccessToken',
+      message: 'wx access_token response',
+      data: {
+        httpStatus: getAccessToken.status,
+        hasAccessToken: !!(getAccessToken.data && getAccessToken.data.access_token),
+        errcode: getAccessToken.data && getAccessToken.data.errcode ? getAccessToken.data.errcode : 0,
+        errmsg: getAccessToken.data && getAccessToken.data.errmsg ? getAccessToken.data.errmsg : '',
+      },
+      timestamp: Date.now(),
+    });
+    // #endregion
     const token = getAccessToken.data.access_token;
+    if (!token) {
+      throw new Error(`获取access_token失败: ${getAccessToken.data && getAccessToken.data.errmsg ? getAccessToken.data.errmsg : 'unknown'}`);
+    }
     app.wxToken = token
     // 7200秒过期，提前
     // await service.redisModule.set('accessToken', token, 7080);
