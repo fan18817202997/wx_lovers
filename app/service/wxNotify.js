@@ -159,32 +159,36 @@ class WxNotify extends Service {
             }
             const wEmoji = getWeatherEmoji(weather.weather)
             const data = {
-                d1: {
-                    value: `📅今天是${curDateStr} ${curWeek}`,
+                date: {
+                    value: `${curDateStr} ${curWeek}`,
                     color: randomHexColor()
                 },
-                d2: {
-                    value: `🏙️地区：${weather.city}`,
+                city: {
+                    value: String(weather.city),
                     color: randomHexColor()
                 },
-                d3: {
-                    value: `${wEmoji}今日天气：${weather.weather} ${weather.nighttemp}℃~${weather.daytemp}℃`,
+                weather: {
+                    value: `${wEmoji}${weather.weather}`,
                     color: randomHexColor()
                 },
-                d4: {
-                    value: `🌸我们已经在一起${lovsDays}天啦`,
+                temperature: {
+                    value: `${weather.nighttemp}~${weather.daytemp}℃`,
                     color: randomHexColor()
                 },
-                d5: {
-                    value: `🎉距离宝宝的生日还有${gfBirthDays}天`,
+                love_day: {
+                    value: String(lovsDays),
                     color: randomHexColor()
                 },
-                d6: {
-                    value: `🌈${chp || '你是最好的宝贝'}`,
+                birthday: {
+                    value: String(gfBirthDays),
                     color: randomHexColor()
                 },
-                d7: {
-                    value: lizhiWord || '',
+                caihongpi: {
+                    value: String(chp || '你是最好的宝贝'),
+                    color: randomHexColor()
+                },
+                lizhi: {
+                    value: String(lizhiWord || ''),
                     color: randomHexColor()
                 }
             }
