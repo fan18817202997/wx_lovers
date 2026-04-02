@@ -122,8 +122,8 @@ class WxNotify extends Service {
     }
 
     async snedNotify(runId = `snedNotify_${Date.now()}`) {
+        const { app, service } = this
         try {
-            const { app, service } = this
             // #region agent log
             console.log('[agent-debug][wxNotify.snedNotify] marker=wxNotify_v2_enter')
             // #endregion
