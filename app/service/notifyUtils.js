@@ -15,6 +15,11 @@ class NotifyUtils extends Service {
         return WEEKS[dayjs().day()]
     }
 
+    // 日期字符串 YYYY-M-D
+    getDateStr() {
+        return dayjs().format('YYYY-M-D')
+    }
+
     // 在一起的天数
     getTogetherDays(cur, old) {
         return dayjs(cur).diff(old, 'day') + 1
@@ -48,10 +53,9 @@ class NotifyUtils extends Service {
         }
     }
 
-    // 获取天气
+    // 获取天气（使用预报接口，返回当天高低温）
     async getWether() {
-        const { app, service } = this
-        // let cityData = fs.readFileSync('./utils/usercity.json', 'utf8')
+        const { app } = this
         let cityData = app.config.userCity || null
         if(!cityData) return null
         const res = await app.curl(`${apiUrl.gdWether}`, {
@@ -59,18 +63,23 @@ class NotifyUtils extends Service {
             dataType: 'json',
             data: {
                 key: app.config.apiConfig.amap.appKey,
-                city: app.config.userData.city,
-                city: cityData.adcode
+                city: cityData.adcode,
+                extensions: 'all'
             }
         })
         
         if(res.status === 200 && res.data.status === '1') {
-            const wether = res.data.lives[0]
-            return wether
+            const forecast = res.data.forecasts[0]
+            const today = forecast.casts[0]
+            return {
+                city: forecast.city,
+                weather: today.dayweather,
+                daytemp: today.daytemp,
+                nighttemp: today.nighttemp,
+            }
         } else {
             throw new Error(`天气接口请求失败: ${res.data && res.data.info ? res.data.info : 'unknown'} (${res.data && res.data.infocode ? res.data.infocode : 'no_code'})`)
         }
-            
     }
 
     // 获取彩虹屁

@@ -3,6 +3,19 @@ const Service = require('egg').Service;
 const { createXml } = require('../../utils/xml2js');
 const randomHexColor = require('../../utils/randomHexColor')
 
+function getWeatherEmoji(condition) {
+    if (!condition) return '🌤️'
+    if (condition.includes('雷')) return '⛈️'
+    if (condition.includes('雪')) return '❄️'
+    if (condition.includes('雨')) return '🌧️'
+    if (condition.includes('晴')) return '☀️'
+    if (condition.includes('多云')) return '⛅'
+    if (condition.includes('阴')) return '☁️'
+    if (condition.includes('雾') || condition.includes('霾')) return '🌫️'
+    if (condition.includes('沙') || condition.includes('尘')) return '🌪️'
+    return '🌤️'
+}
+
 
 class WxNotify extends Service {
     /**
@@ -117,6 +130,7 @@ class WxNotify extends Service {
             const { mineBirth, gfBirth, loveDay } = app.config.userData
             const { words, caihongpi } = app.config
             const curStand = Date.now()
+            const curDateStr = service.notifyUtils.getDateStr() // YYYY-M-D
             const curWeek = service.notifyUtils.getWeek() // 星期几
             const lovsDays = service.notifyUtils.getTogetherDays(curStand, loveDay) // 在一起天数
             const mineBirthDays= service.notifyUtils.birthDays(mineBirth) // 距离我的生日时间
@@ -145,7 +159,7 @@ class WxNotify extends Service {
             }
             const data = {
                 date: {
-                    value: curWeek,
+                    value: `${curDateStr} ${curWeek}`,
                     color: randomHexColor()
                 },
                 city: {
@@ -153,15 +167,15 @@ class WxNotify extends Service {
                     color: randomHexColor()
                 },
                 weather: {
-                    value: weather.weather,
+                    value: `${getWeatherEmoji(weather.weather)}今日天气：${weather.weather} ${weather.nighttemp}℃~${weather.daytemp}℃`,
                     color: randomHexColor()
                 },
                 temperature: {
-                    value: weather.temperature ? `${weather.temperature}°C` : '暂无数据',
+                    value: `${weather.nighttemp}℃~${weather.daytemp}℃`,
                     color: randomHexColor()
                 },
                 humidity: {
-                    value: weather.humidity,
+                    value: '',
                     color: randomHexColor()
                 },
                 love_day: {
