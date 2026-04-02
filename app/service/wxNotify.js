@@ -4,16 +4,16 @@ const { createXml } = require('../../utils/xml2js');
 const randomHexColor = require('../../utils/randomHexColor')
 
 function getWeatherEmoji(condition) {
-    if (!condition) return '🌤️'
-    if (condition.includes('雷')) return '⛈️'
-    if (condition.includes('雪')) return '❄️'
-    if (condition.includes('雨')) return '🌧️'
-    if (condition.includes('晴')) return '☀️'
+    if (!condition) return '☁'
+    if (condition.includes('雷')) return '⚡'
+    if (condition.includes('雪')) return '❄'
+    if (condition.includes('雨')) return '☔'
+    if (condition.includes('晴')) return '☀'
     if (condition.includes('多云')) return '⛅'
-    if (condition.includes('阴')) return '☁️'
-    if (condition.includes('雾') || condition.includes('霾')) return '🌫️'
-    if (condition.includes('沙') || condition.includes('尘')) return '🌪️'
-    return '🌤️'
+    if (condition.includes('阴')) return '☁'
+    if (condition.includes('雾') || condition.includes('霾')) return '☁'
+    if (condition.includes('沙') || condition.includes('尘')) return '☁'
+    return '☁'
 }
 
 
@@ -133,7 +133,6 @@ class WxNotify extends Service {
             const curDateStr = service.notifyUtils.getDateStr() // YYYY-M-D
             const curWeek = service.notifyUtils.getWeek() // 星期几
             const lovsDays = service.notifyUtils.getTogetherDays(curStand, loveDay) // 在一起天数
-            const mineBirthDays= service.notifyUtils.birthDays(mineBirth) // 距离我的生日时间
             const gfBirthDays = service.notifyUtils.birthDays(gfBirth)
             const weather = await service.notifyUtils.getWether() // 获取天气
             let chp = ''
@@ -157,7 +156,6 @@ class WxNotify extends Service {
             if(!users || !users.length) {
                 throw new Error('获取关注用户失败，请先关注测试公众号')
             }
-            const wEmoji = getWeatherEmoji(weather.weather)
             const data = {
                 date: {
                     value: `${curDateStr} ${curWeek}`,
@@ -168,11 +166,11 @@ class WxNotify extends Service {
                     color: randomHexColor()
                 },
                 weather: {
-                    value: `${wEmoji}${weather.weather}`,
+                    value: String(weather.weather),
                     color: randomHexColor()
                 },
                 temperature: {
-                    value: `${weather.nighttemp}~${weather.daytemp}℃`,
+                    value: `${weather.nighttemp}℃~${weather.daytemp}℃`,
                     color: randomHexColor()
                 },
                 love_day: {
