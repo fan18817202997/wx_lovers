@@ -16,6 +16,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16.14.0'
+      - name: Debug runtime version
+        run: |
+          git rev-parse HEAD
+          node -e "const fs=require('fs');const t=fs.readFileSync('./app/service/wxNotify.js','utf8');console.log('wxNotifyHasCtxPattern=',/\\{\\s*ctx\\s*,\\s*app\\s*,\\s*service\\s*\\}/.test(t));console.log('wxNotifyHasMarker=',t.includes('marker=wxNotify_v2_enter'));"
       - name: Depend install and serve
         env:
           WXAPPID: ${{ secrets.WXAPPID }}

@@ -125,6 +125,9 @@ class WxNotify extends Service {
         try {
             const { app, service } = this
             // #region agent log
+            console.log('[agent-debug][wxNotify.snedNotify] marker=wxNotify_v2_enter')
+            // #endregion
+            // #region agent log
             postDebug(app, {sessionId:'04abb4',runId,hypothesisId:'H2',location:'app/service/wxNotify.js:snedNotify',message:'enter snedNotify',data:{hasWxConfig:!!app.config.wx,hasTemplateId:!!(app.config.wx && app.config.wx.template_id),weatherCity:app.config.userData && app.config.userData.weatherCity ? app.config.userData.weatherCity : ''},timestamp:Date.now()})
             // #endregion
             const accessToken = await service.wx.getAccessToken()
@@ -229,6 +232,12 @@ class WxNotify extends Service {
             }
         } catch (error) {
             console.log(error)
+            // #region agent log
+            console.error('[agent-debug][wxNotify.snedNotify]', JSON.stringify({
+                message: error && error.message ? error.message : '',
+                stackTop: error && error.stack ? String(error.stack).split('\n').slice(0, 3).join(' | ') : '',
+            }))
+            // #endregion
             // #region agent log
             postDebug(app, {sessionId:'04abb4',runId,hypothesisId:'H5',location:'app/service/wxNotify.js:snedNotify',message:'snedNotify throw',data:{errorMessage:error && error.message ? error.message : 'unknown',stackTop:error && error.stack ? String(error.stack).split('\n')[0] : ''},timestamp:Date.now()})
             // #endregion
