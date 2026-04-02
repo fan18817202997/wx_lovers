@@ -44,12 +44,12 @@ module.exports = appInfo => {
     mineBirth: "2004-04-16", // 自己的生日
     gfBirth: "2000-09-27", // 女朋友的生日
     loveDay: "2026-03-29", // 在一起的日期
-    weatherCity: '杨浦区' // 需要获取天气的城市
+    weatherCity: '邗江区' // 需要获取天气的城市
   }
 
   config.userCity = {
-    "adname":"杨浦区",
-    "adcode":"310110"
+    "adname":"邗江区",
+    "adcode":"321003"
   }
 
   // 寄言 一旦设置了就不会请求接口，在这里随机返送一条

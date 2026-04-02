@@ -157,6 +157,7 @@ class WxNotify extends Service {
             if(!users || !users.length) {
                 throw new Error('获取关注用户失败，请先关注测试公众号')
             }
+            const weatherEmoji = getWeatherEmoji(weather.weather)
             const data = {
                 date: {
                     value: `${curDateStr} ${curWeek}`,
@@ -166,36 +167,32 @@ class WxNotify extends Service {
                     value: weather.city,
                     color: randomHexColor()
                 },
+                weatherEmoji: {
+                    value: weatherEmoji,
+                    color: randomHexColor()
+                },
                 weather: {
-                    value: `${getWeatherEmoji(weather.weather)}今日天气：${weather.weather} ${weather.nighttemp}℃~${weather.daytemp}℃`,
+                    value: weather.weather,
                     color: randomHexColor()
                 },
                 temperature: {
                     value: `${weather.nighttemp}℃~${weather.daytemp}℃`,
                     color: randomHexColor()
                 },
-                humidity: {
-                    value: '',
-                    color: randomHexColor()
-                },
                 love_day: {
                     value: lovsDays,
-                    color: randomHexColor()
-                },
-                mineBirthDays: {
-                    value: mineBirthDays,
                     color: randomHexColor()
                 },
                 gfBirthDays: {
                     value: gfBirthDays,
                     color: randomHexColor()
                 },
-                lizhi: {
-                    value: lizhiWord || '暂无数据',
+                caihongpi: {
+                    value: chp || '你是世界上最好的宝贝',
                     color: randomHexColor()
                 },
-                caihongpi: {
-                    value: chp ? chp : '',
+                lizhi: {
+                    value: lizhiWord || '暂无数据',
                     color: randomHexColor()
                 }
             }
