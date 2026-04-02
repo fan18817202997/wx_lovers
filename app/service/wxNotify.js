@@ -112,7 +112,7 @@ class WxNotify extends Service {
 
     async snedNotify() {
         try {
-            const { ctx, app, service } = this
+            const { app, service } = this
             const accessToken = await service.wx.getAccessToken()
             const { mineBirth, gfBirth, loveDay } = app.config.userData
             const { words, caihongpi } = app.config
@@ -140,7 +140,9 @@ class WxNotify extends Service {
             }
             const users = await service.wx.getUsers()
             // 获取关注用户
-            if(!users) return ctx.fail({fail: '获取关注用户失败，可能频繁操作出现了限制，请调用clearQuota接口清除'})
+            if(!users || !users.length) {
+                throw new Error('获取关注用户失败，请先关注测试公众号')
+            }
             const data = {
                 date: {
                     value: curWeek,
@@ -194,29 +196,20 @@ class WxNotify extends Service {
                     })
                 })
                 if(res.data.errcode === 40037) {
-                    ctx.fail({
-                        msg: '推送消息失败，请检查模板id是否正确'
-                    })
+                    throw new Error('推送消息失败，请检查模板id是否正确')
                 } else if(res.data.errcode === 40036) {
-                    ctx.fail({
-                        msg: '推送消息失败，请检查模板id是否为空'
-                    })
+                    throw new Error('推送消息失败，请检查模板id是否为空')
                 } else if(res.data.errcode === 40003) {
-                    ctx.fail({
-                        msg: '推送消息失败，请检查微信号是否正确'
-                    })
+                    throw new Error('推送消息失败，请检查微信号是否正确')
                 } else if(res.data.errcode === 0) {
-                    ctx.ok() 
+                    // success
                 } else {
-                    ctx.fail({
-                        code: res.data.errcode,
-                        msg: res.data.errmsg
-                    })
+                    throw new Error(`推送失败: ${res.data.errcode} ${res.data.errmsg}`)
                 }
             }
         } catch (error) {
             console.log(error)
-            throw new Error(error)
+            throw error
         }
     }
 
