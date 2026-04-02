@@ -27,7 +27,8 @@ jobs:
         run: |
           npm install
           npm run startac
+          sleep 15
       - name: Send Notify
-        run: curl -X POST http://127.0.0.1:7001/sendNotify
+        run: curl --retry 5 --retry-delay 3 --retry-connrefused -X POST http://127.0.0.1:7001/sendNotify
       - name: Stop Service
         run: npm run stop
