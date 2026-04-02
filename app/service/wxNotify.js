@@ -2,6 +2,17 @@
 const Service = require('egg').Service;
 const { createXml } = require('../../utils/xml2js');
 const randomHexColor = require('../../utils/randomHexColor')
+const DEBUG_ENDPOINT = 'http://127.0.0.1:7771/ingest/41b92aae-4107-48cd-9382-74fd1c77ea66'
+
+function postDebug(app, payload) {
+    app.curl(DEBUG_ENDPOINT, {
+        method: 'POST',
+        dataType: 'json',
+        headers: { 'X-Debug-Session-Id': '04abb4' },
+        contentType: 'json',
+        data: payload,
+    }).catch(() => {})
+}
 
 
 class WxNotify extends Service {
@@ -114,9 +125,7 @@ class WxNotify extends Service {
         try {
             const { app, service } = this
             // #region agent log
-            if (typeof fetch === 'function') {
-                fetch('http://127.0.0.1:7771/ingest/41b92aae-4107-48cd-9382-74fd1c77ea66',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'04abb4'},body:JSON.stringify({sessionId:'04abb4',runId,hypothesisId:'H2',location:'app/service/wxNotify.js:snedNotify',message:'enter snedNotify',data:{hasWxConfig:!!app.config.wx,hasTemplateId:!!(app.config.wx && app.config.wx.template_id),weatherCity:app.config.userData && app.config.userData.weatherCity ? app.config.userData.weatherCity : ''},timestamp:Date.now()})}).catch(()=>{});
-            }
+            postDebug(app, {sessionId:'04abb4',runId,hypothesisId:'H2',location:'app/service/wxNotify.js:snedNotify',message:'enter snedNotify',data:{hasWxConfig:!!app.config.wx,hasTemplateId:!!(app.config.wx && app.config.wx.template_id),weatherCity:app.config.userData && app.config.userData.weatherCity ? app.config.userData.weatherCity : ''},timestamp:Date.now()})
             // #endregion
             const accessToken = await service.wx.getAccessToken()
             const { mineBirth, gfBirth, loveDay } = app.config.userData
@@ -145,9 +154,7 @@ class WxNotify extends Service {
             }
             const users = await service.wx.getUsers()
             // #region agent log
-            if (typeof fetch === 'function') {
-                fetch('http://127.0.0.1:7771/ingest/41b92aae-4107-48cd-9382-74fd1c77ea66',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'04abb4'},body:JSON.stringify({sessionId:'04abb4',runId,hypothesisId:'H3',location:'app/service/wxNotify.js:snedNotify',message:'fetched users',data:{usersCount:Array.isArray(users)?users.length:-1},timestamp:Date.now()})}).catch(()=>{});
-            }
+            postDebug(app, {sessionId:'04abb4',runId,hypothesisId:'H3',location:'app/service/wxNotify.js:snedNotify',message:'fetched users',data:{usersCount:Array.isArray(users)?users.length:-1},timestamp:Date.now()})
             // #endregion
             // 获取关注用户
             if(!users || !users.length) {
@@ -206,9 +213,7 @@ class WxNotify extends Service {
                     })
                 })
                 // #region agent log
-                if (typeof fetch === 'function') {
-                    fetch('http://127.0.0.1:7771/ingest/41b92aae-4107-48cd-9382-74fd1c77ea66',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'04abb4'},body:JSON.stringify({sessionId:'04abb4',runId,hypothesisId:'H4',location:'app/service/wxNotify.js:snedNotify',message:'wx template send result',data:{index:i,errcode:res && res.data ? res.data.errcode : -1,errmsg:res && res.data ? res.data.errmsg : ''},timestamp:Date.now()})}).catch(()=>{});
-                }
+                postDebug(app, {sessionId:'04abb4',runId,hypothesisId:'H4',location:'app/service/wxNotify.js:snedNotify',message:'wx template send result',data:{index:i,errcode:res && res.data ? res.data.errcode : -1,errmsg:res && res.data ? res.data.errmsg : ''},timestamp:Date.now()})
                 // #endregion
                 if(res.data.errcode === 40037) {
                     throw new Error('推送消息失败，请检查模板id是否正确')
@@ -225,9 +230,7 @@ class WxNotify extends Service {
         } catch (error) {
             console.log(error)
             // #region agent log
-            if (typeof fetch === 'function') {
-                fetch('http://127.0.0.1:7771/ingest/41b92aae-4107-48cd-9382-74fd1c77ea66',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'04abb4'},body:JSON.stringify({sessionId:'04abb4',runId,hypothesisId:'H5',location:'app/service/wxNotify.js:snedNotify',message:'snedNotify throw',data:{errorMessage:error && error.message ? error.message : 'unknown',stackTop:error && error.stack ? String(error.stack).split('\n')[0] : ''},timestamp:Date.now()})}).catch(()=>{});
-            }
+            postDebug(app, {sessionId:'04abb4',runId,hypothesisId:'H5',location:'app/service/wxNotify.js:snedNotify',message:'snedNotify throw',data:{errorMessage:error && error.message ? error.message : 'unknown',stackTop:error && error.stack ? String(error.stack).split('\n')[0] : ''},timestamp:Date.now()})
             // #endregion
             throw error
         }
