@@ -48,10 +48,12 @@ class HomeController extends Controller {
     // 发送订阅通知
     async sendNotify() {
         try {
-            const { service } = this
+            const { ctx, service } = this
             await service.wxNotify.snedNotify()
+            ctx.ok({ msg: '推送任务执行完成' })
         } catch (error) {
             console.log(error)
+            ctx.fail({ msg: error.message || '推送失败' })
         }
     }
 
