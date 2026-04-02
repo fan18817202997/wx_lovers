@@ -74,7 +74,14 @@ class HomeController extends Controller {
             // #region agent log
             postDebug(this.ctx.app, {sessionId:'04abb4',runId,hypothesisId:'H5',location:'app/controller/wx.js:sendNotify',message:'sendNotify failed',data:{errorMessage:error && error.message ? error.message : 'unknown',stackTop:error && error.stack ? String(error.stack).split('\n')[0] : ''},timestamp:Date.now()})
             // #endregion
-            ctx.fail({ msg: error.message || '推送失败' })
+            // #region agent log
+            ctx.fail({
+                msg: error.message || '推送失败',
+                data: {
+                    stackTop: error && error.stack ? String(error.stack).split('\n').slice(0, 5).join(' | ') : '',
+                },
+            })
+            // #endregion
         }
     }
 

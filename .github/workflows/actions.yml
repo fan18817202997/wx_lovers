@@ -34,5 +34,11 @@ jobs:
           sleep 15
       - name: Send Notify
         run: curl --retry 5 --retry-delay 3 --retry-connrefused --fail-with-body -sS -X POST http://127.0.0.1:7001/sendNotify
+      - name: Debug service logs
+        if: always()
+        run: |
+          ls -R logs || true
+          if [ -f logs/wx_send_template/common-error.log ]; then tail -n 200 logs/wx_send_template/common-error.log; fi
+          if [ -f logs/wx_send_template/egg-web.log ]; then tail -n 200 logs/wx_send_template/egg-web.log; fi
       - name: Stop Service
         run: npm run stop
